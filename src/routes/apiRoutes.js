@@ -9,6 +9,9 @@ router.post("/participants", async (req, res) => {
   const { name } = req.body;
 
   try {
+    const resp = await db.collection("participants").findOne({ name: name });
+    if (resp) return res.sendStatus(409);
+
     const lastStatus = Date.now();
     const timeFormated = dayjs(lastStatus).format("HH:mm:ss");
 
