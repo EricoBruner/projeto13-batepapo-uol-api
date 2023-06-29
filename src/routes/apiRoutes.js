@@ -2,6 +2,7 @@ import express from "express";
 import dayjs from "dayjs";
 
 import { db } from "../config/db.js";
+import userValidator from "../validators/userValidator.js";
 
 const router = express.Router();
 
@@ -9,7 +10,10 @@ router.post("/participants", async (req, res) => {
   const { name } = req.body;
 
   try {
-    const resp = await db.collection("participants").findOne({ name: name });
+    const error = userValidator({ name });
+    if (error) return res.sendStatus(422);
+
+    const resp = await db.collection("participants").findOne({ name });
     if (resp) return res.sendStatus(409);
 
     const lastStatus = Date.now();
