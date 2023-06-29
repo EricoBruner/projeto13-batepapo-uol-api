@@ -5,7 +5,7 @@ import { db } from "../config/db.js";
 
 const router = express.Router();
 
-router.get("/participants", async (req, res) => {
+router.post("/participants", async (req, res) => {
   const { name } = req.body;
 
   try {
