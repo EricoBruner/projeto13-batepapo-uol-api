@@ -62,4 +62,42 @@ router.post("/messages", async (req, res) => {
   }
 });
 
+router.get("/messages", async (req, res) => {
+  const { user } = req.headers;
+  const { limit } = req.query;
+
+  if (limit && (limit <= 0 || isNaN(limit) == true)) {
+    return res.sendStatus(422);
+  }
+
+  try {
+    let messages;
+
+    if (!limit) {
+      messages = await db
+        .collection("messages")
+        .find({
+          $or: [{ to: "Todos" }, { to: user }, { from: user }],
+        })
+        .sort({ _id: -1 })
+        .toArray();
+    } else {
+      // db.suaColecao.find().sort({ _id: -1 }).limit(10)
+
+      messages = await db
+        .collection("messages")
+        .find({
+          $or: [{ to: "Todos" }, { to: user }, { from: user }],
+        })
+        .sort({ _id: -1 })
+        .limit(parseInt(limit))
+        .toArray();
+    }
+
+    return res.status(200).json(messages);
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
+});
+
 export default router;
