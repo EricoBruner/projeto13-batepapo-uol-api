@@ -1,7 +1,6 @@
-import express from "express";
+import express, { json } from "express";
 import router from "./routes/apiRoutes.js";
-import dotenv from "dotenv";
-dotenv.config();
+import cors from "cors";
 
 const PARTICIPANTES = [{ name: "João", lastStatus: 12313123 }];
 
@@ -17,6 +16,8 @@ const MENSAGENS = [
 
 const app = express();
 
+app.use(cors());
+app.use(json());
 app.use(router);
 
 app.listen(5000, () => {
