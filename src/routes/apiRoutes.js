@@ -82,8 +82,6 @@ router.get("/messages", async (req, res) => {
         .sort({ _id: -1 })
         .toArray();
     } else {
-      // db.suaColecao.find().sort({ _id: -1 }).limit(10)
-
       messages = await db
         .collection("messages")
         .find({
@@ -95,6 +93,26 @@ router.get("/messages", async (req, res) => {
     }
 
     return res.status(200).json(messages);
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
+});
+
+router.get("/status", async (req, res) => {
+  const { user } = req.headers;
+
+  if (!user) return res.sendStatus(404);
+  const resp = await db.collection("participants").findOne({ name: user });
+  if (!resp) return res.sendStatus(404);
+
+  try {
+    const lastStatus = Date.now();
+
+    await db
+      .collection("participants")
+      .updateOne({ name: user }, { $set: { lastStatus: lastStatus } });
+
+    return res.sendStatus(200);
   } catch (err) {
     return res.status(500).send(err.message);
   }
