@@ -31,4 +31,13 @@ router.post("/participants", async (req, res) => {
   }
 });
 
+router.get("/participants", async (req, res) => {
+  try {
+    const participants = await db.collection("participants").find().toArray();
+    return res.status(200).json(participants);
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
+});
+
 export default router;
