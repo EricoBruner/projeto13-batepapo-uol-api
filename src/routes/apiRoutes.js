@@ -2,7 +2,9 @@ import express from "express";
 import dayjs from "dayjs";
 
 import { db } from "../config/db.js";
+
 import userValidator from "../validators/userValidator.js";
+import messageValidator from "../validators/messageValidator.js";
 
 const router = express.Router();
 
@@ -11,7 +13,7 @@ router.post("/participants", async (req, res) => {
 
   try {
     const error = userValidator({ name });
-    if (error) return res.sendStatus(422);
+    if (error) return res.status(422).send(error);
 
     const resp = await db.collection("participants").findOne({ name });
     if (resp) return res.sendStatus(409);
@@ -60,8 +62,8 @@ router.post("/messages", async (req, res) => {
   };
 
   try {
-    const error = userValidator(message);
-    if (error) return res.sendStatus(422);
+    const error = messageValidator(message);
+    if (error) return res.status(422).send(error);
 
     const resp = await db.collection("participants").findOne({ name: user });
     if (!resp) return res.sendStatus(422);

@@ -6,6 +6,7 @@ export default function messageValidator(message) {
     text: joi.string().required(),
     type: joi.string().valid("message", "private_message").required(),
     from: joi.string().required(),
+    time: joi.string().required(),
   });
 
   const validation = messageSchema.validate(message, { abortEarly: false });
