@@ -112,7 +112,7 @@ router.get("/messages", async (req, res) => {
   }
 });
 
-router.get("/status", async (req, res) => {
+router.post("/status", async (req, res) => {
   const { user } = req.headers;
 
   if (!user) return res.sendStatus(404);
