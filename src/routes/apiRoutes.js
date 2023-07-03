@@ -1,5 +1,6 @@
 import express from "express";
 import dayjs from "dayjs";
+import { ObjectId } from "mongodb";
 
 import { db } from "../config/db.js";
 
@@ -107,6 +108,26 @@ router.get("/messages", async (req, res) => {
     }
 
     return res.status(200).json(messages);
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
+});
+
+router.delete("/messages/:id", async (req, res) => {
+  const { user } = req.headers;
+  const { id } = req.params;
+
+  try {
+    const resp = await db
+      .collection("messages")
+      .findOne({ _id: new ObjectId(id) });
+    if (!resp) return res.sendStatus(404);
+
+    if (user != resp.from) return res.sendStatus(401);
+
+    await db.collection("messages").deleteOne({ _id: new ObjectId(id) });
+
+    res.sendStatus(200);
   } catch (err) {
     return res.status(500).send(err.message);
   }
